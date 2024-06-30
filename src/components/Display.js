@@ -8,8 +8,10 @@ const Display = ({ generatedData, prompt }) => {
   useEffect(() => {
     if (generatedData) {
       try {
-        const parsedData = JSON.parse(generatedData);
-        const formattedContent = formatContent(parsedData);
+       //const formattedContent = formatContent(he.decode(generatedData))
+       const parsedData = JSON.parse(generatedData);
+       const formattedContent = formatContent(parsedData);
+       console.log(formattedContent)
         setEditableContent(formattedContent);
       } catch (error) {
         console.error('Error parsing generatedData:', error);
@@ -19,7 +21,7 @@ const Display = ({ generatedData, prompt }) => {
 
   const formatContent = (data) => {
     if (!data) {
-      return '';
+      throw new Error('Failed to generate lesson plan, please try again');
     }
 
     const { "Lesson Title": lessonTitle, "Learning Objectives": learningObjectives, "Materials Needed": materialsNeeded, "Lesson Procedure": lessonProcedure, Assessment, Differentiation } = data;
@@ -51,8 +53,7 @@ const Display = ({ generatedData, prompt }) => {
         <div className="quill-editor">
           <ReactQuill
             value={editableContent}
-            id='displayEd'
-            onChange={setEditableContent}
+            onChange={setEditableContent} 
             className="h-auto w-full"
             modules={{
               toolbar: [

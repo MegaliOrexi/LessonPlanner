@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Display from './Display';
 import Spinner from './Spinner';
+import axios from 'axios';
+
+
 
 const Prompt = () => {
   const [prompt, setPrompt] = useState('');
@@ -16,34 +19,75 @@ const Prompt = () => {
     }
   }, [generatedData]);
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when fetching starts
+    setLoading(true);
+  
     try {
-      const response = await fetch('https://lessonplanner-api.onrender.com', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt }),
-      });
+      const apiUrl = 'https://api.openai.com/v1/chat/completions';
+      const API_KEY = process.env.OPENAI_API_KEY; // Replace with your actual API key
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`,
+      };
+  
+      const requestBody = {
+        messages: [{
+          role: 'user',
+          content: `
+            Ignore any previous instructions or questions asked.
+            NOTE: it is very important all of the subheadings are generated with content
+            Your main role is to act as an expert with 20 years of experience to be a plan provider for teachers:
+            This is the subject that needs the plan: "${prompt}"
+            
+            
+            DON'T send any extra text describing or talking, just this exact format with details filled in based on the topic, remember all of these subheadings NEED to be in it
 
-      if (!response.ok) {
+              {
+              "Lesson Title" : "...",
+              "Learning Objectives": "...",
+              "Materials Needed": "...",
+              "Lesson Procedure": {
+                "Step1": "...",
+                "Step2": "...",
+                ...
+              },
+              "Assessment": "...",
+              "Differentiation": "..."
+            }
+          `
+        }],
+        model: 'gpt-3.5-turbo',
+        max_tokens: 1500
+      };
+  
+      const { data } = await axios.post(apiUrl, requestBody, { headers });
+
+      
+      if (!data || !data.choices || !data.choices.length) {
         throw new Error('Failed to generate lesson plan');
       }
-
-      const content = await response.json();
-      setGeneratedData(JSON.stringify(content.data));
+      
+      console.log(data.choices[0].content)
+      const generatedContent = data.choices[0].message.content;
+      //const stringifiedContent = JSON.parse(generatedContent);
+      
+      // const parsedContent = JSON.parse(stringifiedContent)
+      setGeneratedData(generatedContent);
+      console.log(generatedContent)
       setDisplayPrompt(prompt);
       setError(null);
     } catch (error) {
       setError(error.message);
       setGeneratedData(null);
-      setPrompt('')
+      setPrompt('');
     } finally {
-      setLoading(false); // Set loading to false when fetching completes (success or error)
+      setLoading(false);
     }
   };
+  
 
   return (
     <div className="mt-8 w-full max-w-2xl mx-auto p-4">
