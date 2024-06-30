@@ -27,7 +27,7 @@ const Prompt = () => {
   
     try {
       const apiUrl = 'https://api.openai.com/v1/chat/completions';
-      const API_KEY = process.env.OPENAI_API_KEY; // Replace with your actual API key
+      const API_KEY = "API_KEY"; // Replace with your actual API key
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_KEY}`,
