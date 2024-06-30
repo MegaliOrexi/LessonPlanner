@@ -27,7 +27,7 @@ const Prompt = () => {
   
     try {
       const apiUrl = 'https://api.openai.com/v1/chat/completions';
-      const API_KEY = "API_KEY"; // Replace with your actual API key
+      const API_KEY = process.env.OPENAI_API_KEY; // Replace with your actual API key
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_KEY}`,
@@ -44,6 +44,7 @@ const Prompt = () => {
             
             
             DON'T send any extra text describing or talking, just this exact format with details filled in based on the topic, remember all of these subheadings NEED to be in it
+            Please keep this exact format to allow the formatting to be proper
 
               {
               "Lesson Title" : "...",

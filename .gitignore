@@ -8,6 +8,8 @@
 
 /src/components/.env
 
+.env
+
 .firebaserc
 .firebase.json
 
