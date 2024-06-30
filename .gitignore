@@ -6,7 +6,7 @@
 .pnp.js
 /build
 
-/src/components/env
+/src/components/.env
 
 .firebaserc
 .firebase.json
